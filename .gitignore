@@ -1,0 +1,16 @@
+# Python and Jupyter specific gitignores
+
+.idea/
+.vscode/
+.ipynb_checkpoints/
+__pycache__/
+.pytest_cache/
+
+# TMP Directory ignore
+
+tmp/
+hdfs/
+
+# Project specific
+
+storage/minio/
