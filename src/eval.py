@@ -1,3 +1,4 @@
+from configparser import ConfigParser
 import pandas as pd
 import torch as t
 from torchtext.vocab import Vocab
@@ -7,7 +8,7 @@ import preprocessing
 from model import FakeNewsClassifier
 
 
-def eval_model_on_test(model: FakeNewsClassifier, device: t.device, config: dict, vocab: Vocab) -> None:
+def eval_model_on_test(model: FakeNewsClassifier, device: t.device, config: ConfigParser, vocab: Vocab) -> None:
 
     test_path = config['paths']['test_path']
     max_pad_len = int(config['preprocessing']['max_pad_len'])

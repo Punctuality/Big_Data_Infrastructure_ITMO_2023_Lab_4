@@ -1,3 +1,4 @@
+from configparser import ConfigParser
 from typing import Union
 
 import pandas as pd
@@ -84,7 +85,7 @@ class TrainingData:
         self.vocab = vocab
 
 def train_baseline(
-        config: dict, \
+        config: ConfigParser, \
         device: t.device, \
 ) -> tuple[FakeNewsClassifier, TrainingData]:
 
