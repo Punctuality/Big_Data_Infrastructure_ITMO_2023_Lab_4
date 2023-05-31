@@ -67,5 +67,9 @@ services:
       - ./data:/app/data
       - ./tmp/result:/app/result
 
+  fake-news-receiver:
+    image: fake_news_receiver:latest
+    container_name: fake-news-receiver
+
 volumes:
   minio_storage:
