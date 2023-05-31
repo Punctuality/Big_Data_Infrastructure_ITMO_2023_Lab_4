@@ -49,27 +49,20 @@ services:
     depends_on:
       - zookeeper
 
-  kafka-ui:
-    container_name: kafka-ui
-    image: provectuslabs/kafka-ui:latest
-    ports:
-      - 8881:8080
-    environment:
-      DYNAMIC_CONFIG_ENABLED: true
-    volumes:
-      - ~/kui/config.yml:/etc/kafkaui/dynamic_config.yaml
-
-
   fake-news-classifier:
     image: fake_news_classificator:latest
     container_name: fake-news-classfier
     volumes:
       - ./data:/app/data
       - ./tmp/result:/app/result
+    depends_on:
+      - kafka
 
   fake-news-receiver:
     image: fake_news_receiver:latest
     container_name: fake-news-receiver
+    depends_on:
+      - kafka
 
 volumes:
   minio_storage:

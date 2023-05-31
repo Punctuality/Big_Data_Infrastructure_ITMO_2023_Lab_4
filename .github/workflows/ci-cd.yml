@@ -75,7 +75,7 @@ jobs:
           ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_receiver:${{ steps.tag_or_commit.outputs.version }}
           ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_receiver:latest
       
-  run_docker_image:
+  run_model_and_receiver:
     needs: build_docker_images
     runs-on: ubuntu-latest
     steps:
