@@ -121,7 +121,7 @@ jobs:
       - name: Docker pull receiver image
         run: |
           docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_receiver:latest
-          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_receiver:latest fake_news_receover:latest 
+          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_receiver:latest fake_news_receiver:latest 
 
       - name: Start Kafka+Zoo
         run: docker-compose up -d zookeeper kafka
