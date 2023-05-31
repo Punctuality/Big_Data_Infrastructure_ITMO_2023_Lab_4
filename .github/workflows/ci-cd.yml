@@ -128,7 +128,7 @@ jobs:
 
       - name: Wait for Kafka to start
         run: |
-          while ! docker exec -it kafka kafka-topics --list --bootstrap-server localhost:9092 > /dev/null 2>&1; do sleep 1; done
+          while ! docker exec -it kafka kafka-topics --list --bootstrap-server localhost:9092; do sleep 1; done
           echo "Kafka is up and running!"
 
       - name: Run Model
