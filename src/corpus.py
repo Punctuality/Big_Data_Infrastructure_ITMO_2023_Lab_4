@@ -1,4 +1,5 @@
 import pandas as pd
+import csv
 import re
 
 import nltk
@@ -11,7 +12,7 @@ nltk.download('stopwords')
 
 
 def read_dataframe(path: str) -> pd.DataFrame:
-    data = pd.read_csv(path)
+    data = pd.read_csv(path, quoting=csv.QUOTE_NONE)
     data = data.fillna('')
 
     return data
