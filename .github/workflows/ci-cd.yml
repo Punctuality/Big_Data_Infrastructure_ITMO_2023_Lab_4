@@ -30,7 +30,7 @@ jobs:
     - name: Run tests
       run: pytest --cov=src
 
-  build_docker_image:
+  build_docker_images:
     needs: run_tests
     runs-on: ubuntu-latest
     steps:
@@ -55,17 +55,28 @@ jobs:
           echo "::set-output name=version::${GITHUB_SHA}"
         fi
 
-    - name: Build and push Docker image
+    - name: Build and push Docker image of classificator
       uses: docker/build-push-action@v3
       with:
         context: .
         push: true
+        file: Model_Dockerfile
         tags: |
           ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_classificator:${{ steps.tag_or_commit.outputs.version }}
           ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_classificator:latest
+
+    - name: Build and push Docker image of receiver
+      uses: docker/build-push-action@v3
+      with:
+        context: .
+        push: true
+        file: Receiver_Dockerfile
+        tags: |
+          ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_receiver:${{ steps.tag_or_commit.outputs.version }}
+          ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_receiver:latest
       
   run_docker_image:
-    needs: build_docker_image
+    needs: build_docker_images
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -102,10 +113,31 @@ jobs:
       - name: Pull data and model from DVC remote storage
         run: dvc pull -r remote_webhdfs
 
-      - name: Docker pull image
+      - name: Docker pull model image
         run: |
           docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_classificator:latest
           docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_classificator:latest fake_news_classificator:latest 
 
-      - name: Run Docker-Compose service
+      - name: Docker pull receiver image
+        run: |
+          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_receiver:latest
+          docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/fake_news_receiver:latest fake_news_receover:latest 
+
+      - name: Start Kafka+Zoo
+        run: docker-compose up -d zookeeper kafka
+
+      - name: Wait for Kafka to start
+        run: |
+          while ! docker exec -it kafka kafka-topics --list --bootstrap-server localhost:9092 > /dev/null 2>&1; do sleep 1; done
+          echo "Kafka is up and running!"
+
+      - name: Run Model
         run: docker-compose up fake-news-classifier
+
+      - name: Run Receiver
+        run: docker-compose up fake-news-receiver
+
+      - name: Stop Kafka+Zoo
+        run: |
+          docker contrainer stop kafka
+          docker contrainer stop zookeeper

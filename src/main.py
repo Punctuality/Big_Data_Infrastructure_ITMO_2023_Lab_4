@@ -1,15 +1,20 @@
 import argparse
 import configparser
+import json
 import os
 
 import train
 import eval
 from model import FakeNewsClassifier
 import device_config
+from result_processing import send_results_to_bus
 
 import torch as t
+import pandas as pd
 
 import logging as log
+
+from kafka import KafkaProducer
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Define config path')
@@ -58,5 +63,13 @@ if __name__ == "__main__":
         vocab = data.vocab
 
     log.info("Evaluating model")
-    eval.eval_model_on_test(model, device, config, vocab)
-    log.info("Evaluation finished. Exiting.")
+    result_eval: pd.DataFrame = eval.eval_model_on_test(model, device, config, vocab)
+    log.info("Evaluation finished.")
+
+    log.info("Sending results to result bus (kafka)")
+
+    client = KafkaProducer(bootstrap_servers=config['kafka']['bootstrap_servers'])
+
+    send_results_to_bus(client, config['kafka']['result_topic'], result_eval)
+
+    log.info("Results sent. Exiting.")
