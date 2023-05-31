@@ -12,6 +12,7 @@ from torchtext.vocab import Vocab
 import corpus
 import preprocessing
 from model import *
+from util import md5_hash
 import dataset
 import device_config
 
@@ -93,6 +94,9 @@ def train_baseline(
     log.debug("Loading data")
 
     train_path = config['paths']['train_path']
+
+    log.info(f"Loading data from {train_path}")
+    log.info(f"File md5 hash is {md5_hash(train_path)}")
     train_data = corpus.read_dataframe(train_path)
 
     from sklearn.model_selection import train_test_split
