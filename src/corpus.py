@@ -12,7 +12,7 @@ nltk.download('stopwords')
 
 
 def read_dataframe(path: str) -> pd.DataFrame:
-    data = pd.read_csv(path, quoting=csv.QUOTE_NONE)
+    data = pd.read_csv(path, quoting=csv.QUOTE_NONE, on_bad_lines='skip')
     data = data.fillna('')
 
     return data
