@@ -19,5 +19,4 @@ COPY docker_config.ini ./config.ini
 VOLUME /app/data
 VOLUME /app/result
 
-
 CMD ["python", "src/main.py", "--config_path", "/app/config.ini"]

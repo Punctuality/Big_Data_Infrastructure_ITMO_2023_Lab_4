@@ -8,13 +8,13 @@ import preprocessing
 from model import FakeNewsClassifier
 
 
-def eval_model_on_test(model: FakeNewsClassifier, device: t.device, config: ConfigParser, vocab: Vocab) -> None:
+def eval_model_on_test(model: FakeNewsClassifier, device: t.device, config: ConfigParser, vocab: Vocab) -> pd.DataFrame:
 
     test_path = config['paths']['test_path']
     max_pad_len = int(config['preprocessing']['max_pad_len'])
     path_to_save = config['paths']['submission_path']
 
-    test_data = corpus.read_dataframe(test_path)
+    test_data: pd.DataFrame = corpus.read_dataframe(test_path)
     test_corpus = corpus.load_corpus(test_data)
     test_tokens = preprocessing.tokenize(test_corpus)
     voc_test_tokens = preprocessing.vocab_tokens(vocab, test_tokens)
@@ -27,4 +27,5 @@ def eval_model_on_test(model: FakeNewsClassifier, device: t.device, config: Conf
         y_pred = model(padded_test_tokens)
 
     test_data["label"] = list(map(lambda x: 1 if x > 0.5 else 0, y_pred.to("cpu").numpy()))
-    test_data.to_csv(path_to_save, index=True)к
+
+    return test_data

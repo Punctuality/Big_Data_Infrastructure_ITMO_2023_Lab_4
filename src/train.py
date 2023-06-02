@@ -93,6 +93,7 @@ def train_baseline(
     log.debug("Loading data")
 
     train_path = config['paths']['train_path']
+
     train_data = corpus.read_dataframe(train_path)
 
     from sklearn.model_selection import train_test_split
